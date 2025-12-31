@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./Back-end/api
+    container_name: f1_api
+    platform: linux/amd64
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Back-end/api:/app
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+    restart: always
+
+  admin:
+    build: ./Back-end/admin
+    container_name: f1_admin
+    platform: linux/amd64
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./Back-end/admin:/app
+      - /app/vendor
+    command: [ "sh", "-c", "php artisan optimize:clear && echo 'Admin Dashboard running at http://localhost:8001' && php artisan serve --host=0.0.0.0 --port=8001" ]
+    environment:
+      - APP_URL=http://localhost:8001
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=f1_telemetry
+      - DB_USERNAME=f1_user
+      - DB_PASSWORD=secret
+    depends_on:
+      - api
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: f1_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=f1_telemetry
+      - POSTGRES_USER=f1_user
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  frontend:
+    build: ./Front-end
+    container_name: f1_frontend
+    platform: linux/amd64
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./Front-end:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://api:8000
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
