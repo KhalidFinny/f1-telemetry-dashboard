@@ -1,111 +1,106 @@
-# Dokumentasi F1 Telemetry
+# F1 Telemetry Dashboard
 
-Proyek ini adalah aplikasi telemetri balapan F1 yang terdiri dari beberapa layanan (microservices) yang dikelola menggunakan Docker. Dokumentasi ini mencakup panduan setup, stack teknologi yang digunakan, dan cara menjalankan aplikasi.
+A comprehensive F1 telemetry analysis platform consisting of a high-performance backend API, a Laravel-based admin dashboard, and a modern Next.js frontend.
 
-## Tech Stack
+## 🏗 Tech Stack
 
-Proyek ini terbagi menjadi tiga komponen utama:
+This project is built using a microservices architecture:
 
-**1. Front-end**
-- Framework: **Next.js 16** (App Router)
-- Library UI: **React 19**
-- Styling: **Tailwind CSS 4**
-- Bahasa: **TypeScript**
+### 1. Front-end
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **UI Library:** React 19
+- **Styling:** Tailwind CSS 4
+- **Path:** `front-end/`
 
-**2. Back-end API (Data Processing)**
-- Framework: **FastAPI**
-- Server: **Uvicorn**
-- Data Science Libs: **Pandas**, **Numpy**, **Scikit-learn**, **FastF1**
-- Fungsi: Menangani pemrosesan data telemetri F1.
+### 2. Back-end API (Data Processing)
+- **Framework:** FastAPI (Python)
+- **Server:** Uvicorn
+- **Data Processing:** Pandas, Numpy, Scikit-learn, FastF1
+- **Path:** `back-end/api/`
 
-**3. Back-end Admin**
-- Framework: **Laravel** (PHP)
-- Tooling: **Composer**, **Artisan**
-- Fungsi: Dashboard administrasi dan manajemen data.
+### 3. Back-end Admin
+- **Framework:** Laravel (PHP)
+- **Database ORM:** Eloquent
+- **Admin Panel:** Custom built with Laravel Blade/Vue
+- **Path:** `back-end/admin/`
 
-**4. Infrastruktur**
-- Containerization: **Docker**
-- Orchestration: **Docker Compose**
-
----
-
-## Prasyarat
-
-Sebelum memulai, pastikan perangkat Anda telah terinstal:
-
-1.  **Git**: Untuk melakukan clone repository.
-2.  **Docker Desktop**: Untuk menjalankan container aplikasi.
+### 4. Infrastructure
+- **Database:** PostgreSQL 15
+- **Containerization:** Docker
+- **Orchestration:** Docker Compose
 
 ---
 
-## Cara Setup
+## 🚀 Getting Started
 
-Ikuti langkah-langkah berikut untuk menjalankan aplikasi di komputer lokal Anda.
+### Prerequisites
+- [Git](https://git-scm.com/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-### 1. Clone Repository
-Unduh kode sumber proyek ke komputer lokal Anda:
+### Installation Steps
 
-```bash
-git clone <repository-url>
-cd f1-telemetry
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/KhalidFinny/f1-telemetry-dashboard.git
+   cd f1-telemetry-dashboard
+   ```
 
-### 2. Konfigurasi Environment Variables
-Anda perlu membuat file konfigurasi `.env` untuk setiap layanan. Gunakan file contoh `.env.example` yang tersedia sebagai dasar.
+2. **Configure Environment Variables**
+   Set up the necessary `.env` files for each service. You can copy the provided examples:
 
-**Untuk Back-end Admin:**
-```bash
-cp Back-end/admin/.env.example Back-end/admin/.env
-```
+   **Back-end Admin (Laravel)**
+   ```bash
+   cp back-end/admin/.env.example back-end/admin/.env
+   ```
 
-**Untuk Back-end API:**
-```bash
-cp Back-end/api/.env.example Back-end/api/.env
-```
+   **Back-end API (FastAPI)**
+   ```bash
+   cp back-end/api/.env.example back-end/api/.env
+   ```
 
-**Untuk Front-end:**
-```bash
-cp Front-end/.env.example Front-end/.env
-```
+   **Front-end (Next.js)**
+   ```bash
+   cp front-end/.env.example front-end/.env
+   ```
+   > **Note:** Open each `.env` file and review the configurations. Ensure database credentials in `back-end/admin/.env` match those in `docker-compose.yml`.
 
-> **Catatan:** Periksa isi masing-masing file `.env` dan sesuaikan nilai konfigurasi jika diperlukan (seperti koneksi database atau API key).
+3. **Run with Docker Compose**
+   From the root directory (where `docker-compose.yml` is located), run:
 
-### 3. Jalankan Aplikasi dengan Docker Compose
-Jalankan perintah berikut di root folder proyek (di mana file `docker-compose.yml` berada) untuk membangun dan menjalankan semua layanan:
-
-```bash
-docker compose up --build
-```
-
-Tunggu hingga proses build selesai dan semua container berjalan. Anda akan melihat log dari masing-masing layanan di terminal.
-
----
-
-## Akses Aplikasi
-
-Setelah semua layanan berjalan, Anda dapat mengaksesnya melalui browser:
-
-- **Front-end (User Interface)**: [http://localhost:3000](http://localhost:3000)
-- **Back-end API (Docs/Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Back-end Admin**: [http://localhost:8001](http://localhost:8001)
+   ```bash
+   docker compose up --build
+   ```
+   This command will build the images for the frontend, api, and admin services, and start the PostgreSQL database.
 
 ---
 
-## Struktur Folder
+## 🌐 Accessing the Application
 
-Berikut adalah gambaran umum struktur direktori proyek:
+Once the services are up and running, you can access them at:
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **Front-end** | [http://localhost:3000](http://localhost:3000) | Main user interface for telemetry visualization |
+| **API Documentation** | [http://localhost:8000/docs](http://localhost:8000/docs) | Swagger UI for the FastAPI service |
+| **Admin Dashboard** | [http://localhost:8001](http://localhost:8001) | Admin panel for managing users and data |
+
+---
+
+## 📂 Project Structure
 
 ```
-f1-telemetry/
-├── Back-end/
-│   ├── admin/          # Source code Laravel (Admin Dashboard)
-│   └── api/            # Source code FastAPI (Data Telemetri)
-├── Front-end/          # Source code Next.js (Aplikasi Web)
-├── docker-compose.yml  # Konfigurasi orkestrasi Docker
-└── README.md           # Dokumentasi proyek
+f1-telemetry-dashboard/
+├── back-end/
+│   ├── admin/          # Laravel Admin Dashboard
+│   └── api/            # FastAPI Telemetry Service
+├── front-end/          # Next.js Frontend Application
+├── docker-compose.yml  # Docker services configuration
+└── README.md           # Project Documentation
 ```
 
-## Troubleshooting
+## 🛠 Troubleshooting
 
-- **Port Conflict**: Jika aplikasi gagal berjalan, pastikan port 3000, 8000, atau 8001 tidak sedang digunakan oleh aplikasi lain.
-- **Docker Error**: Pastikan Docker Desktop dalam keadaan *Running* sebelum menjalankan perintah `docker compose`.
+- **Port Conflicts:** Ensure ports `3000`, `8000`, `8001`, and `5432` are not occupied by other applications.
+- **Database Connection:** If the Admin service fails to connect to the database, ensure the `db` service is healthy and the credentials in `back-end/admin/.env` match the `docker-compose.yml` values (User: `f1_user`, DB: `f1_telemetry`).
+- **Permissions:** on Linux/Mac, you might need to run docker commands with `sudo` or check file permissions for the `storage` directory in Laravel.
