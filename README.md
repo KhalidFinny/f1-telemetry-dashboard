@@ -1,58 +1,59 @@
-# F1 Telemetry Dashboard
+# Dashboard Telemetri F1
 
-A comprehensive F1 telemetry analysis platform consisting of a high-performance backend API, a Laravel-based admin dashboard, and a modern Next.js frontend.
+Platform analisis telemetri F1 yang komprehensif, terdiri dari API backend berkinerja tinggi, dasbor admin berbasis Laravel, dan frontend Next.js yang modern.
 
-## 🏗 Tech Stack
+## 🏗 Teknologi yang Digunakan
 
-This project is built using a microservices architecture:
+Proyek ini dibangun menggunakan arsitektur microservices:
 
 ### 1. Front-end
 - **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript
-- **UI Library:** React 19
+- **Bahasa:** TypeScript
+- **Library UI:** React 19
 - **Styling:** Tailwind CSS 4
 - **Path:** `front-end/`
 
-### 2. Back-end API (Data Processing)
+### 2. Back-end API (Pemrosesan Data)
 - **Framework:** FastAPI (Python)
 - **Server:** Uvicorn
-- **Data Processing:** Pandas, Numpy, Scikit-learn, FastF1
+- **Pemrosesan Data:** Pandas, Numpy, Scikit-learn, FastF1
 - **Path:** `back-end/api/`
 
 ### 3. Back-end Admin
 - **Framework:** Laravel (PHP)
 - **Database ORM:** Eloquent
-- **Admin Panel:** Custom built with Laravel Blade/Vue
+- **Panel Admin:** Kustom (Laravel Blade/Vue)
 - **Path:** `back-end/admin/`
 
-### 4. Infrastructure
+### 4. Infrastruktur
 - **Database:** PostgreSQL 15
 - **Containerization:** Docker
 - **Orchestration:** Docker Compose
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Panduan Memulai
 
-### Prerequisites
+### Prasyarat
 - [Git](https://git-scm.com/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-### Installation Steps
+### Langkah Instalasi
 
-1. **Clone the repository**
+1. **Clone repository**
    ```bash
    git clone https://github.com/KhalidFinny/f1-telemetry-dashboard.git
    cd f1-telemetry-dashboard
    ```
 
-2. **Configure Environment Variables**
-   Set up the necessary `.env` files for each service. You can copy the provided examples:
+2. **Konfigurasi Environment Variable**
+   Siapkan file `.env` yang diperlukan untuk setiap layanan.
 
    **Back-end Admin (Laravel)**
    ```bash
    cp back-end/admin/.env.example back-end/admin/.env
    ```
+   > **Catatan:** Layanan `admin` menggunakan driver `file` untuk cache dan session secara default untuk memastikan startup berjalan lancar.
 
    **Back-end API (FastAPI)**
    ```bash
@@ -63,44 +64,57 @@ This project is built using a microservices architecture:
    ```bash
    cp front-end/.env.example front-end/.env
    ```
-   > **Note:** Open each `.env` file and review the configurations. Ensure database credentials in `back-end/admin/.env` match those in `docker-compose.yml`.
 
-3. **Run with Docker Compose**
-   From the root directory (where `docker-compose.yml` is located), run:
+3. **Jalankan dengan Docker Compose**
+   Dari direktori root (di mana `docker-compose.yml` berada), jalankan:
 
    ```bash
    docker compose up --build
    ```
-   This command will build the images for the frontend, api, and admin services, and start the PostgreSQL database.
+   Perintah ini akan membangun image dan memulai semua layanan. Tunggu hingga Anda melihat pesan "database system is ready to accept connections" di log.
+
+4. **Inisialisasi Layanan (Langkah Penting)**
+   Setelah container berjalan, Anda harus menginisialisasi layanan Admin. Buka terminal baru dan jalankan:
+
+   **Jalankan Migrasi Database:**
+   ```bash
+   docker compose exec admin php artisan migrate
+   ```
+
+   **Generate Application Key:**
+   ```bash
+   docker compose exec admin php artisan key:generate
+   ```
 
 ---
 
-## 🌐 Accessing the Application
+## 🌐 Mengakses Aplikasi
 
-Once the services are up and running, you can access them at:
+Setelah layanan berjalan, Anda dapat mengaksesnya di:
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| **Front-end** | [http://localhost:3000](http://localhost:3000) | Main user interface for telemetry visualization |
-| **API Documentation** | [http://localhost:8000/docs](http://localhost:8000/docs) | Swagger UI for the FastAPI service |
-| **Admin Dashboard** | [http://localhost:8001](http://localhost:8001) | Admin panel for managing users and data |
+| Layanan | URL | Deskripsi |
+|---------|-----|-----------|
+| **Front-end** | [http://localhost:3000](http://localhost:3000) | Antarmuka pengguna utama untuk visualisasi telemetri |
+| **Dokumen API** | [http://localhost:8000/docs](http://localhost:8000/docs) | Swagger UI untuk layanan FastAPI |
+| **Dasbor Admin** | [http://localhost:8001](http://localhost:8001) | Panel admin untuk mengelola pengguna dan data |
 
 ---
 
-## 📂 Project Structure
+## 📂 Struktur Proyek
 
 ```
 f1-telemetry-dashboard/
 ├── back-end/
-│   ├── admin/          # Laravel Admin Dashboard
-│   └── api/            # FastAPI Telemetry Service
-├── front-end/          # Next.js Frontend Application
-├── docker-compose.yml  # Docker services configuration
-└── README.md           # Project Documentation
+│   ├── admin/          # Dasbor Admin Laravel
+│   └── api/            # Layanan Telemetri FastAPI
+├── front-end/          # Aplikasi Frontend Next.js
+├── docker-compose.yml  # Konfigurasi layanan Docker
+└── README.md           # Dokumentasi Proyek
 ```
 
-## 🛠 Troubleshooting
+## 🛠 Pemecahan Masalah (Troubleshooting)
 
-- **Port Conflicts:** Ensure ports `3000`, `8000`, `8001`, and `5432` are not occupied by other applications.
-- **Database Connection:** If the Admin service fails to connect to the database, ensure the `db` service is healthy and the credentials in `back-end/admin/.env` match the `docker-compose.yml` values (User: `f1_user`, DB: `f1_telemetry`).
-- **Permissions:** on Linux/Mac, you might need to run docker commands with `sudo` or check file permissions for the `storage` directory in Laravel.
+- **Admin 500 Error:** Jika Anda melihat "Server Error" di halaman Login Admin, pastikan Anda telah menjalankan perintah `key:generate` yang tercantum di Langkah 4.
+- **Koneksi Database Ditolak:** Layanan Admin menunggu Database hingga "healthy". Jika macet, periksa log `db` untuk melihat error.
+- **Migrasi Gagal:** Pastikan layanan `db` sedang berjalan (`docker ps`) sebelum menjalankan `php artisan migrate`.
+- **Windows vs Linux:** Proyek ini menggunakan `.gitattributes` untuk memaksakan "line endings" gaya Linux. Jika skrip gagal di Windows, pastikan Git Anda dikonfigurasi untuk mematuhi `.gitattributes`.

@@ -1,26 +1,24 @@
-version: "3.9"
-
 services:
   api:
-    build: ./Back-end/api
+    build: ./back-end/api
     container_name: f1_api
-    platform: linux/amd64
+
     ports:
       - "8000:8000"
     volumes:
-      - ./Back-end/api:/app
+      - ./back-end/api:/app
     environment:
       - PYTHONDONTWRITEBYTECODE=1
     restart: always
 
   admin:
-    build: ./Back-end/admin
+    build: ./back-end/admin
     container_name: f1_admin
-    platform: linux/amd64
+
     ports:
       - "8001:8001"
     volumes:
-      - ./Back-end/admin:/app
+      - ./back-end/admin:/app
       - /app/vendor
     command: [ "sh", "-c", "php artisan optimize:clear && echo 'Admin Dashboard running at http://localhost:8001' && php artisan serve --host=0.0.0.0 --port=8001" ]
     environment:
@@ -32,8 +30,10 @@ services:
       - DB_USERNAME=f1_user
       - DB_PASSWORD=secret
     depends_on:
-      - api
-      - db
+      api:
+        condition: service_started
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:15-alpine
@@ -44,17 +44,22 @@ services:
       - POSTGRES_DB=f1_telemetry
       - POSTGRES_USER=f1_user
       - POSTGRES_PASSWORD=secret
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U f1_user -d f1_telemetry" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
 
   frontend:
-    build: ./Front-end
+    build: ./front-end
     container_name: f1_frontend
-    platform: linux/amd64
+
     ports:
       - "3000:3000"
     volumes:
-      - ./Front-end:/app
+      - ./front-end:/app
       - /app/node_modules
     environment:
       - NEXT_PUBLIC_API_BASE_URL=http://api:8000
